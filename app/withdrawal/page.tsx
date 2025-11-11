@@ -15,7 +15,7 @@ export default function WithdrawalDashboard() {
   const fetchWithdrawals = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:8099/api/admin/pending");
+      const res = await axios.get("https://twoxbet-app-latest.onrender.com/api/admin/pending");
       const sorted = res.data.sort(
         (a: any, b: any) =>
           new Date(b.requestedAt || b.id).getTime() - new Date(a.requestedAt || a.id).getTime()
@@ -30,7 +30,7 @@ export default function WithdrawalDashboard() {
 
   const markAsPaid = async (id: number) => {
     try {
-      await axios.put(`http://localhost:8099/api/admin/${id}/pay`);
+      await axios.put(`https://twoxbet-app-latest.onrender.com/api/admin/${id}/pay`);
       toast.success("Withdrawal marked as PAID");
       fetchWithdrawals();
     } catch (err) {
