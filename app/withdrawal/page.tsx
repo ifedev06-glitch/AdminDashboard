@@ -12,17 +12,22 @@ export default function WithdrawalDashboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const withdrawalsPerPage = 10;
 
+  // Update this to your backend URL
+  const BASE_URL = "https://aviator-app-latest.onrender.com";
+
   const fetchWithdrawals = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("https://twoxbet-app-latest.onrender.com/api/admin/pending");
+      const res = await axios.get(`${BASE_URL}/pending`);
+      // Sort by requestedAt descending
       const sorted = res.data.sort(
         (a: any, b: any) =>
-          new Date(b.requestedAt || b.id).getTime() - new Date(a.requestedAt || a.id).getTime()
+          new Date(b.requestedAt).getTime() - new Date(a.requestedAt).getTime()
       );
       setWithdrawals(sorted);
     } catch (err) {
       toast.error("Failed to load withdrawals");
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -30,11 +35,12 @@ export default function WithdrawalDashboard() {
 
   const markAsPaid = async (id: number) => {
     try {
-      await axios.put(`https://twoxbet-app-latest.onrender.com/api/admin/${id}/pay`);
+      await axios.put(`${BASE_URL}/${id}/pay`);
       toast.success("Withdrawal marked as PAID");
-      fetchWithdrawals();
+      fetchWithdrawals(); // refresh list
     } catch (err) {
       toast.error("Failed to update withdrawal");
+      console.error(err);
     }
   };
 
@@ -50,9 +56,9 @@ export default function WithdrawalDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
-      {/* Welcome and Back to Bets button */}
+      {/* Header */}
       <div className="flex justify-between items-center mb-4">
-        <p className="text-lg font-semibold">Welcome, Mipo 👋</p>
+        <p className="text-lg font-semibold">Welcome, Admin 👋</p>
         <Link
           href="/"
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded font-semibold text-sm transition"
@@ -77,7 +83,7 @@ export default function WithdrawalDashboard() {
                 <th className="p-2 text-left">Bank</th>
                 <th className="p-2 text-left">Account No</th>
                 <th className="p-2 text-left">Account Name</th>
-                <th className="p-2 text-left">Amount</th>
+                <th className="p-2 text-right">Amount</th>
                 <th className="p-2 text-left">Status</th>
                 <th className="p-2 text-left">Requested At</th>
                 <th className="p-2 text-left">Processed At</th>
@@ -92,23 +98,19 @@ export default function WithdrawalDashboard() {
                   <td className="p-2">{w.bankName}</td>
                   <td className="p-2">{w.accountNumber}</td>
                   <td className="p-2">{w.accountName}</td>
-                  <td className="p-2 font-semibold">₦{w.amount.toLocaleString()}</td>
+                  <td className="p-2 text-right font-semibold">₦{w.amount.toLocaleString()}</td>
                   <td className="p-2">
                     <span
                       className={`px-2 py-1 rounded text-xs font-medium ${
                         w.status === "PAID"
                           ? "bg-green-700"
-                          : w.status === "PENDING"
-                          ? "bg-yellow-700"
-                          : "bg-red-700"
+                          : "bg-yellow-700"
                       }`}
                     >
                       {w.status}
                     </span>
                   </td>
-                  <td className="p-2">
-                    {w.requestedAt ? new Date(w.requestedAt).toLocaleString() : "-"}
-                  </td>
+                  <td className="p-2">{w.requestedAt ? new Date(w.requestedAt).toLocaleString() : "-"}</td>
                   <td className="p-2">{w.processedAt ? new Date(w.processedAt).toLocaleString() : "-"}</td>
                   <td className="p-2 flex gap-2 justify-center">
                     {w.status !== "PAID" && (
