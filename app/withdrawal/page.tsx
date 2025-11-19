@@ -13,7 +13,7 @@ export default function WithdrawalDashboard() {
   const withdrawalsPerPage = 10;
 
   // Update this to your backend URL
-  const BASE_URL = "https://aviator-app-latest.onrender.com";
+  const BASE_URL = "https://aviator-app-latest.onrender.com/admin";
 
   const fetchWithdrawals = async () => {
     try {

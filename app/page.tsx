@@ -15,7 +15,7 @@ export default function AdminBetsDashboard() {
   const fetchBets = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("https://aviator-app-latest.onrender.com"); // Aviator admin endpoint
+      const res = await axios.get("https://aviator-app-latest.onrender.com/admin/bets"); // Aviator admin endpoint
       const sortedBets = res.data.sort(
         (a: any, b: any) =>
           new Date(b.placedAt).getTime() - new Date(a.placedAt).getTime()
